@@ -18,6 +18,7 @@
 
 package dev.lyzev.skia
 
+import com.mojang.blaze3d.opengl.GlTexture
 import dev.lyzev.api.event.EventListener
 import dev.lyzev.api.event.EventSkiaDrawScene
 import dev.lyzev.api.event.on
@@ -27,13 +28,12 @@ import dev.lyzev.api.skia.ImageHelper
 import dev.lyzev.api.skia.WrappedBackendRenderTarget
 import io.github.humbleui.skija.*
 import io.github.humbleui.types.Rect
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.texture.GlTexture
+import net.minecraft.client.Minecraft
 
 object HudExample : EventListener {
 
     private const val PADDING = 5f
-    private val mc by lazy { MinecraftClient.getInstance() }
+    private val mc by lazy { Minecraft.getInstance() }
 
     var isHidden by toggleable("Hidden")
 
@@ -70,13 +70,13 @@ object HudExample : EventListener {
     private fun draw(context: DirectContext, renderTarget: WrappedBackendRenderTarget, canvas: Canvas) {
         val textureImage = ImageHelper[
             context,
-            (mc.framebuffer.colorAttachment as GlTexture).glId,
-            mc.framebuffer.textureWidth,
-            mc.framebuffer.textureHeight,
+            (mc.mainRenderTarget.colorTexture as GlTexture).glId(),
+            mc.mainRenderTarget.width,
+            mc.mainRenderTarget.height,
             false
         ]
 
-        val content = "${mc.currentFps} FPS @ ${renderTarget.width}x${renderTarget.height} | lyzev (Бен)"
+        val content = "${mc.fps} FPS @ ${renderTarget.width}x${renderTarget.height} | lyzev (Бен)"
         val textSize = font.measureText(content)
         val rect = Rect.makeXYWH(PADDING, PADDING, textSize.right + 2 * PADDING, textSize.height + 2 * PADDING)
         with(canvas) {

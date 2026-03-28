@@ -4,8 +4,8 @@ import org.gradle.api.tasks.Exec
 import org.gradle.internal.jvm.Jvm
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    id("fabric-loom") version "1.11-SNAPSHOT"
+    kotlin("jvm") version "2.3.10"
+    id("net.fabricmc.fabric-loom") version "1.15-SNAPSHOT"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -16,7 +16,8 @@ base {
     archivesName.set(project.property("archives_base_name") as String)
 }
 
-val targetJavaVersion = 21
+val targetJavaVersion = 25
+
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     withSourcesJar()
@@ -27,8 +28,7 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:${project.property("minecraft_version")}")
-    mappings("net.fabricmc:yarn:${project.property("yarn_mappings")}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
+    implementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
 
     implementation("io.github.humbleui:skija-shared:${project.property("skija_version")}")
     implementation("io.github.humbleui:skija-windows-x64:${project.property("skija_version")}")
@@ -39,16 +39,19 @@ dependencies {
 }
 
 tasks.processResources {
+    val loaderVersion = project.property("loader_version")!!
+    val minecraftVersion = project.property("minecraft_version")!!
+
     inputs.property("version", project.version)
-    inputs.property("minecraft_version", project.property("minecraft_version"))
-    inputs.property("loader_version", project.property("loader_version"))
+    inputs.property("minecraft_version", minecraftVersion)
+    inputs.property("loader_version", loaderVersion)
     filteringCharset = "UTF-8"
 
     filesMatching("fabric.mod.json") {
         expand(
             "version" to project.version,
-            "minecraft_version" to project.property("minecraft_version"),
-            "loader_version" to project.property("loader_version")
+            "minecraft_version" to minecraftVersion,
+            "loader_version" to loaderVersion
         )
     }
 }
