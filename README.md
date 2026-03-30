@@ -1,6 +1,6 @@
 # Skija
 
-**Minecraft Version:** 1.21.4
+**Minecraft Version:** 26.1
 
 This project is an example implementation of integrating the Skija graphics library with Minecraft to enhance rendering capabilities. It demonstrates how to use Skija for advanced rendering techniques within the Minecraft environment.
 
