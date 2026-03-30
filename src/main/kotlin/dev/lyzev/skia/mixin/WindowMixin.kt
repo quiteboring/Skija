@@ -15,22 +15,21 @@
  *
  * You should have received a copy of the GNU General Public License along with Skija. If not, see <https://www.gnu.org/licenses/>.
  */
+package dev.lyzev.skia.mixin
 
-package dev.lyzev.skia.mixin;
+import com.mojang.blaze3d.platform.Window
+import dev.lyzev.api.event.EventSkiaInit
+import org.spongepowered.asm.mixin.Mixin
+import org.spongepowered.asm.mixin.injection.At
+import org.spongepowered.asm.mixin.injection.Inject
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
-import com.mojang.blaze3d.platform.Window;
-import dev.lyzev.api.event.EventSkiaInit;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+@Mixin(Window::class)
+class WindowMixin {
 
-@Mixin(Window.class)
-public class WindowMixin {
-
-    @Inject(method = "onFramebufferResize", at = @At("RETURN"))
-    private void onFramebufferResize(long handle, int width, int height, CallbackInfo ci) {
-        new EventSkiaInit(width > 0 ? width : 1, height > 0 ? height : 1).fire();
+    @Inject(method = ["onFramebufferResize"], at = [At("RETURN")])
+    private fun onFramebufferResize(handle: Long, width: Int, height: Int, ci: CallbackInfo?) {
+        EventSkiaInit(if (width > 0) width else 1, if (height > 0) height else 1).fire()
     }
 
 }
