@@ -34,14 +34,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 class MinecraftMixin {
 
     @Inject(method = ["<init>"], at = [At("RETURN")])
-    private fun onInit(args: GameConfig?, ci: CallbackInfo?) {
-        val hudExample = HudExample
-        val instance = SkiaImplMc
+    private fun onInit(args: GameConfig, ci: CallbackInfo) {
+        HudExample // Initialize the example (you can initialize your own anywhere you want)
 
+        // Leave this code as is
+        SkiaImplMc
         val width = IntArray(1)
         val height = IntArray(1)
-
-        GLFW.glfwGetFramebufferSize(Minecraft.getInstance().getWindow().handle(), width, height)
+        GLFW.glfwGetFramebufferSize(Minecraft.getInstance().window.handle(), width, height)
         EventSkiaInit(if (width[0] > 0) width[0] else 1, if (height[0] > 0) height[0] else 1).fire()
     }
 
@@ -52,7 +52,7 @@ class MinecraftMixin {
             target = "Lcom/mojang/blaze3d/systems/RenderSystem;flipFrame(Lcom/mojang/blaze3d/TracyFrameCapture;)V"
         )]
     )
-    private fun onBeforeFlipFrame(advanceGameTime: Boolean, ci: CallbackInfo?) {
+    private fun onBeforeFlipFrame(advanceGameTime: Boolean, ci: CallbackInfo) {
         EventSkiaDraw.fire()
     }
 

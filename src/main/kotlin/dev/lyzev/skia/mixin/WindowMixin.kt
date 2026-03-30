@@ -24,11 +24,18 @@ import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
+/**
+ * Mixin class that injects the initialization of Skija into the onFramebufferSizeChanged method of Window.
+ */
 @Mixin(Window::class)
 class WindowMixin {
 
+    /**
+     * Injects the initialization of Skija into the onFramebufferSizeChanged method of Window.
+     * This is done to ensure that Skija is reinitialized after the window has been resized.
+     */
     @Inject(method = ["onFramebufferResize"], at = [At("RETURN")])
-    private fun onFramebufferResize(handle: Long, width: Int, height: Int, ci: CallbackInfo?) {
+    private fun onFramebufferResize(handle: Long, width: Int, height: Int, ci: CallbackInfo) {
         EventSkiaInit(if (width > 0) width else 1, if (height > 0) height else 1).fire()
     }
 
